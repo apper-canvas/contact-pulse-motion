@@ -93,7 +93,7 @@ const ContactForm = ({
       newErrors.email = "Please enter a valid email address"
 }
     
-    if (formData.phone && !/^[+]?[\d\s()-\.]{10,}$/.test(formData.phone)) {
+if (formData.phone && !/^[+]?[\d\s()-.]{10,}$/.test(formData.phone)) {
       newErrors.phone = "Please enter a valid phone number"
     }
 
