@@ -9,7 +9,7 @@ const ApperFileFieldComponent = ({
 const [isReady, setIsReady] = useState(false)
   const [error, setError] = useState(null)
   const [isSDKLoading, setIsSDKLoading] = useState(true)
-  const elementIdRef = useRef(null)
+  const elementIdRef = useRef(elementId)
   const mountedRef = useRef(false)
   console.log('elementId1:', elementId)
 
@@ -21,6 +21,11 @@ const [isReady, setIsReady] = useState(false)
     return config.existingFiles
   }, [config?.existingFiles?.length, config?.existingFiles?.[0]?.id || config?.existingFiles?.[0]?.Id])
 
+  // Update elementId ref when it changes
+  useEffect(() => {
+    elementIdRef.current = elementId;
+  }, [elementId]);
+  
   // Single useEffect for SDK availability, mounting and unmounting
 useEffect(() => {
     let componentMounted = true
