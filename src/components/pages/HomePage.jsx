@@ -27,11 +27,11 @@ const HomePage = () => {
   const [modalLoading, setModalLoading] = useState(false)
 
   // Load contacts on component mount
-  useEffect(() => {
+useEffect(() => {
     loadContacts()
   }, [])
 
-  // Filter contacts when search query or categories change
+
   useEffect(() => {
     filterContacts()
   }, [contacts, searchQuery, selectedCategories])
@@ -43,28 +43,28 @@ const HomePage = () => {
       const data = await contactService.getAll()
       setContacts(data)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || "Failed to load contacts")
       console.error("Failed to load contacts:", err)
     } finally {
       setLoading(false)
     }
   }
 
-  const filterContacts = useCallback(() => {
+const filterContacts = useCallback(() => {
     let filtered = [...contacts]
 
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim()
       filtered = filtered.filter(contact => 
-        contact.firstName.toLowerCase().includes(query) ||
-        contact.lastName.toLowerCase().includes(query) ||
-        contact.email.toLowerCase().includes(query) ||
-        contact.phone.replace(/\D/g, '').includes(query.replace(/\D/g, '')) ||
-        contact.company.toLowerCase().includes(query) ||
-        contact.jobTitle.toLowerCase().includes(query) ||
-        contact.notes.toLowerCase().includes(query) ||
-        contact.categories.some(cat => cat.toLowerCase().includes(query))
+        contact.firstName?.toLowerCase().includes(query) ||
+        contact.lastName?.toLowerCase().includes(query) ||
+        contact.email?.toLowerCase().includes(query) ||
+        contact.phone?.replace(/\D/g, '').includes(query.replace(/\D/g, '')) ||
+        contact.company?.toLowerCase().includes(query) ||
+        contact.jobTitle?.toLowerCase().includes(query) ||
+        contact.notes?.toLowerCase().includes(query) ||
+        contact.categories?.some(cat => cat.toLowerCase().includes(query))
       )
     }
 
@@ -72,15 +72,15 @@ const HomePage = () => {
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(contact =>
         selectedCategories.some(category => 
-          contact.categories.includes(category)
+          contact.categories?.includes(category)
         )
       )
     }
 
     // Sort by name
-    filtered.sort((a, b) => {
-      const nameA = `${a.firstName} ${a.lastName}`.toLowerCase()
-      const nameB = `${b.firstName} ${b.lastName}`.toLowerCase()
+filtered.sort((a, b) => {
+      const nameA = `${a.firstName || ''} ${a.lastName || ''}`.toLowerCase()
+      const nameB = `${b.firstName || ''} ${b.lastName || ''}`.toLowerCase()
       return nameA.localeCompare(nameB)
     })
 
@@ -102,7 +102,7 @@ const HomePage = () => {
     setIsDeleteModalOpen(true)
   }
 
-  const handleContactSubmit = async (contactData) => {
+const handleContactSubmit = async (contactData) => {
     try {
       setModalLoading(true)
       
@@ -123,14 +123,14 @@ const HomePage = () => {
       setIsContactModalOpen(false)
       setEditingContact(null)
     } catch (err) {
-      toast.error(err.message)
+      toast.error(err.message || "Failed to save contact")
       console.error("Failed to save contact:", err)
     } finally {
       setModalLoading(false)
     }
   }
 
-  const handleDeleteConfirm = async () => {
+const handleDeleteConfirm = async () => {
     if (!deletingContact) return
 
     try {
@@ -141,14 +141,14 @@ const HomePage = () => {
       setIsDeleteModalOpen(false)
       setDeletingContact(null)
     } catch (err) {
-      toast.error(err.message)
+      toast.error(err.message || "Failed to delete contact")
       console.error("Failed to delete contact:", err)
     } finally {
       setModalLoading(false)
     }
   }
 
-  const handleToggleFavorite = async (contact) => {
+const handleToggleFavorite = async (contact) => {
     try {
       const updatedContact = await contactService.toggleFavorite(contact.Id)
       setContacts(prev => prev.map(c => 
@@ -158,7 +158,7 @@ const HomePage = () => {
       const action = updatedContact.isFavorite ? "added to" : "removed from"
       toast.success(`${contact.firstName} ${contact.lastName} ${action} favorites`)
     } catch (err) {
-      toast.error(err.message)
+      toast.error(err.message || "Failed to toggle favorite")
       console.error("Failed to toggle favorite:", err)
     }
   }

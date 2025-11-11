@@ -1,102 +1,221 @@
-import categoriesData from "@/services/mockData/categories.json"
-
-// Helper to simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-// In-memory storage for categories
-let categories = [...categoriesData]
+import { getApperClient } from "@/services/apperClient";
+import { toast } from "react-toastify";
 
 export const categoryService = {
   async getAll() {
-    await delay(200)
-    return [...categories]
+    try {
+      const apperClient = getApperClient();
+      const response = await apperClient.fetchRecords('categories_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "name_c"}},
+          {"field": {"Name": "color_c"}},
+          {"field": {"Name": "icon_c"}}
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      // Transform database fields to UI format
+      return response.data.map(category => ({
+        Id: category.Id,
+        name: category.name_c || "",
+        color: category.color_c || "#6366F1",
+        icon: category.icon_c || "Tag"
+      }));
+    } catch (error) {
+      console.error("Error fetching categories:", error?.response?.data?.message || error);
+      return [];
+    }
   },
 
   async getById(id) {
-    await delay(150)
-    const category = categories.find(c => c.Id === parseInt(id))
-    if (!category) {
-      throw new Error(`Category with id ${id} not found`)
+    try {
+      const apperClient = getApperClient();
+      const response = await apperClient.getRecordById('categories_c', id, {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "name_c"}},
+          {"field": {"Name": "color_c"}},
+          {"field": {"Name": "icon_c"}}
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      const category = response.data;
+      return {
+        Id: category.Id,
+        name: category.name_c || "",
+        color: category.color_c || "#6366F1",
+        icon: category.icon_c || "Tag"
+      };
+    } catch (error) {
+      console.error(`Error fetching category ${id}:`, error?.response?.data?.message || error);
+      throw error;
     }
-    return { ...category }
   },
 
   async create(categoryData) {
-    await delay(300)
-    
-    // Validation
-    if (!categoryData.name?.trim()) {
-      throw new Error("Category name is required")
-    }
-    
-    // Check for duplicate names
-    if (categories.some(c => c.name.toLowerCase() === categoryData.name.toLowerCase().trim())) {
-      throw new Error("Category name already exists")
-    }
+    try {
+      // Validation
+      if (!categoryData.name?.trim()) {
+        throw new Error("Category name is required");
+      }
 
-    // Create new category
-    const newCategory = {
-      Id: Math.max(...categories.map(c => c.Id), 0) + 1,
-      name: categoryData.name.trim(),
-      color: categoryData.color || "#6366F1",
-      icon: categoryData.icon || "Tag"
-    }
+      const apperClient = getApperClient();
+      
+      // Transform UI format to database fields
+      const dbData = {
+        Name: categoryData.name.trim(),
+        name_c: categoryData.name.trim(),
+        color_c: categoryData.color || "#6366F1",
+        icon_c: categoryData.icon || "Tag"
+      };
 
-    categories.push(newCategory)
-    return { ...newCategory }
+      const response = await apperClient.createRecord('categories_c', {
+        records: [dbData]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error("Failed to create category");
+        }
+
+        const createdCategory = successful[0].data;
+        return {
+          Id: createdCategory.Id,
+          name: createdCategory.name_c || "",
+          color: createdCategory.color_c || "#6366F1",
+          icon: createdCategory.icon_c || "Tag"
+        };
+      }
+    } catch (error) {
+      console.error("Error creating category:", error?.response?.data?.message || error);
+      throw error;
+    }
   },
 
   async update(id, categoryData) {
-    await delay(300)
-    
-    const index = categories.findIndex(c => c.Id === parseInt(id))
-    if (index === -1) {
-      throw new Error(`Category with id ${id} not found`)
-    }
+    try {
+      // Validation
+      if (!categoryData.name?.trim()) {
+        throw new Error("Category name is required");
+      }
 
-    // Validation
-    if (!categoryData.name?.trim()) {
-      throw new Error("Category name is required")
-    }
-    
-    // Check for duplicate names (excluding current category)
-    if (categories.some(c => c.Id !== parseInt(id) && c.name.toLowerCase() === categoryData.name.toLowerCase().trim())) {
-      throw new Error("Category name already exists")
-    }
+      const apperClient = getApperClient();
+      
+      // Transform UI format to database fields
+      const dbData = {
+        Id: parseInt(id),
+        Name: categoryData.name.trim(),
+        name_c: categoryData.name.trim(),
+        color_c: categoryData.color || "#6366F1",
+        icon_c: categoryData.icon || "Tag"
+      };
 
-    // Update category
-    const updatedCategory = {
-      ...categories[index],
-      name: categoryData.name.trim(),
-      color: categoryData.color || categories[index].color,
-      icon: categoryData.icon || categories[index].icon
-    }
+      const response = await apperClient.updateRecord('categories_c', {
+        records: [dbData]
+      });
 
-    categories[index] = updatedCategory
-    return { ...updatedCategory }
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error("Failed to update category");
+        }
+
+        const updatedCategory = successful[0].data;
+        return {
+          Id: updatedCategory.Id,
+          name: updatedCategory.name_c || "",
+          color: updatedCategory.color_c || "#6366F1",
+          icon: updatedCategory.icon_c || "Tag"
+        };
+      }
+    } catch (error) {
+      console.error("Error updating category:", error?.response?.data?.message || error);
+      throw error;
+    }
   },
 
   async delete(id) {
-    await delay(250)
-    
-    const index = categories.findIndex(c => c.Id === parseInt(id))
-    if (index === -1) {
-      throw new Error(`Category with id ${id} not found`)
-    }
+    try {
+      const apperClient = getApperClient();
+      const response = await apperClient.deleteRecord('categories_c', {
+        RecordIds: [parseInt(id)]
+      });
 
-    const deletedCategory = categories[index]
-    categories.splice(index, 1)
-    return { ...deletedCategory }
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error("Failed to delete category");
+        }
+        
+        return successful.length === 1;
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error?.response?.data?.message || error);
+      throw error;
+    }
   },
 
   getCategoryByName(name) {
-    return categories.find(c => c.name === name) || null
+    // This method is synchronous and used by UI components
+    // For now, return null - could be enhanced to cache categories
+    return null;
   },
 
   getCategoryColors() {
-    return categories.reduce((colors, category) => {
-      colors[category.name] = category.color
-      return colors
-    }, {})
+    // This method is synchronous and used by UI components
+    // For now, return empty object - could be enhanced to cache categories
+    return {};
   }
-}
+};

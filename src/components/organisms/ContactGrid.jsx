@@ -21,9 +21,9 @@ const ContactGrid = ({
   // Get available letters from contacts
   const getAvailableLetters = () => {
     const letters = new Set()
-    contacts.forEach(contact => {
-      const firstLetter = contact.firstName.charAt(0).toUpperCase()
-      if (firstLetter.match(/[A-Z]/)) {
+contacts.forEach(contact => {
+      const firstLetter = contact.firstName?.charAt(0).toUpperCase()
+      if (firstLetter && firstLetter.match(/[A-Z]/)) {
         letters.add(firstLetter)
       }
     })
@@ -34,8 +34,8 @@ const ContactGrid = ({
   const getFilteredContacts = () => {
     if (!selectedLetter) return contacts
     
-    return contacts.filter(contact => 
-      contact.firstName.charAt(0).toUpperCase() === selectedLetter
+return contacts.filter(contact => 
+      contact.firstName?.charAt(0).toUpperCase() === selectedLetter
     )
   }
 

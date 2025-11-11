@@ -1,7 +1,10 @@
-import { motion } from "framer-motion"
-import SearchBar from "@/components/molecules/SearchBar"
-import Button from "@/components/atoms/Button"
-import ApperIcon from "@/components/ApperIcon"
+import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/layouts/Root";
+import React from "react";
+import ApperIcon from "@/components/ApperIcon";
+import SearchBar from "@/components/molecules/SearchBar";
+import Button from "@/components/atoms/Button";
 
 const Header = ({ 
   searchQuery, 
@@ -10,7 +13,13 @@ const Header = ({
   contactCount = 0,
   selectedCategories = []
 }) => {
+  const { user, isAuthenticated } = useSelector(state => state.user)
+  const { logout } = useAuth()
   const hasActiveFilters = selectedCategories.length > 0
+
+  const handleLogout = async () => {
+    await logout()
+  }
 
   return (
     <motion.header
@@ -59,25 +68,47 @@ const Header = ({
             </Button>
           </div>
 
-          {/* Quick Actions */}
-          <div className="hidden lg:flex items-center gap-2">
-            <Button
-              variant="ghost"
-              icon="Download"
-              size="sm"
-              className="text-gray-600"
-            >
-              Export
-            </Button>
+          {/* User Actions */}
+          <div className="flex items-center gap-2">
+            {isAuthenticated && user && (
+              <div className="hidden lg:flex items-center gap-3 mr-3">
+                <span className="text-sm text-gray-600">
+                  {user.firstName || user.emailAddress}
+                </span>
+              </div>
+            )}
             
-            <Button
-              variant="ghost"
-              icon="Upload"
-              size="sm"
-              className="text-gray-600"
-            >
-              Import
-            </Button>
+            <div className="hidden lg:flex items-center gap-1">
+              <Button
+                variant="ghost"
+                icon="Download"
+                size="sm"
+                className="text-gray-600"
+              >
+                Export
+              </Button>
+              
+              <Button
+                variant="ghost"
+                icon="Upload"
+                size="sm"
+                className="text-gray-600"
+              >
+                Import
+              </Button>
+              
+              {isAuthenticated && (
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  icon="LogOut"
+                  size="sm"
+                  className="text-gray-600"
+                >
+                  Logout
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
