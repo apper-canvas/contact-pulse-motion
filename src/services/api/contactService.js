@@ -1,10 +1,10 @@
-import contactsData from "@/services/mockData/contacts.json"
+import contactsData from "@/services/mockData/contacts.json";
 
 // Helper to simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // In-memory storage for contacts
-let contacts = [...contactsData]
+let contacts = [...contactsData];
 
 export const contactService = {
   async getAll() {
@@ -37,7 +37,7 @@ export const contactService = {
       throw new Error("Please enter a valid phone number")
     }
 
-    // Create new contact
+// Create new contact
     const newContact = {
       Id: Math.max(...contacts.map(c => c.Id), 0) + 1,
       firstName: contactData.firstName.trim(),
@@ -50,12 +50,13 @@ export const contactService = {
       notes: contactData.notes?.trim() || "",
       isFavorite: contactData.isFavorite || false,
       photoUrl: contactData.photoUrl || "",
+      attachments: contactData.attachments || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    }
+    };
 
-    contacts.push(newContact)
-    return { ...newContact }
+    contacts.push(newContact);
+    return { ...newContact };
   },
 
   async update(id, contactData) {
@@ -79,7 +80,7 @@ export const contactService = {
       throw new Error("Please enter a valid phone number")
     }
 
-    // Update contact
+// Update contact
     const updatedContact = {
       ...contacts[index],
       firstName: contactData.firstName.trim(),
@@ -92,11 +93,12 @@ export const contactService = {
       notes: contactData.notes?.trim() || "",
       isFavorite: contactData.isFavorite || false,
       photoUrl: contactData.photoUrl || "",
+      attachments: contactData.attachments || [],
       updatedAt: new Date().toISOString()
-    }
+    };
 
-    contacts[index] = updatedContact
-    return { ...updatedContact }
+    contacts[index] = updatedContact;
+    return { ...updatedContact };
   },
 
   async delete(id) {
@@ -107,9 +109,9 @@ export const contactService = {
       throw new Error(`Contact with id ${id} not found`)
     }
 
-    const deletedContact = contacts[index]
-    contacts.splice(index, 1)
-    return { ...deletedContact }
+const deletedContact = contacts[index];
+    contacts.splice(index, 1);
+    return { ...deletedContact };
   },
 
   async search(query) {
@@ -163,10 +165,10 @@ export const contactService = {
       throw new Error(`Contact with id ${id} not found`)
     }
 
-    contacts[index].isFavorite = !contacts[index].isFavorite
-    contacts[index].updatedAt = new Date().toISOString()
+contacts[index].isFavorite = !contacts[index].isFavorite;
+    contacts[index].updatedAt = new Date().toISOString();
     
-    return { ...contacts[index] }
+    return { ...contacts[index] };
   },
 
   // Utility validation functions
@@ -177,7 +179,7 @@ export const contactService = {
 
 isValidPhone(phone) {
     // Allow various phone formats
-const phoneRegex = /^[+]?[\d\s()-.]{10,}$/
-    return phoneRegex.test(phone)
+    const phoneRegex = /^[+]?[\d\s()-.]{10,}$/;
+    return phoneRegex.test(phone);
   }
-}
+};

@@ -94,26 +94,35 @@ const ContactCard = ({ contact, onEdit, onDelete, onToggleFavorite, onCall, onEm
           </div>
         </div>
 
-        {/* Categories */}
-        {contact.categories && contact.categories.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {contact.categories.slice(0, 3).map((category, index) => (
-              <Badge
-                key={index}
-                size="sm"
-                color={categoryColors[category]}
-                className="category-badge"
-              >
-                {category}
-              </Badge>
-            ))}
-            {contact.categories.length > 3 && (
-              <Badge size="sm" variant="outline">
-                +{contact.categories.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
+{/* Categories and File Attachments */}
+        <div className="mt-4 space-y-2">
+          {contact.categories && contact.categories.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {contact.categories.slice(0, 3).map((category, index) => (
+                <Badge
+                  key={index}
+                  size="sm"
+                  color={categoryColors[category]}
+                  className="category-badge"
+                >
+                  {category}
+                </Badge>
+              ))}
+              {contact.categories.length > 3 && (
+                <Badge size="sm" variant="outline">
+                  +{contact.categories.length - 3}
+                </Badge>
+              )}
+            </div>
+          )}
+          
+          {contact.attachments && contact.attachments.length > 0 && (
+            <div className="flex items-center gap-1 text-xs text-gray-500">
+              <ApperIcon name="Paperclip" className="w-3 h-3" />
+              <span>{contact.attachments.length} attachment{contact.attachments.length !== 1 ? 's' : ''}</span>
+            </div>
+          )}
+        </div>
 
         {/* Quick Actions */}
         <motion.div

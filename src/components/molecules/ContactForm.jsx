@@ -5,6 +5,7 @@ import Textarea from "@/components/atoms/Textarea"
 import Button from "@/components/atoms/Button"
 import Badge from "@/components/atoms/Badge"
 import ApperIcon from "@/components/ApperIcon"
+import ApperFileFieldComponent from "@/components/atoms/FileUploader/ApperFileFieldComponent"
 import { categoryService } from "@/services/api/categoryService"
 
 const ContactForm = ({ 
@@ -13,7 +14,7 @@ const ContactForm = ({
   onCancel, 
   isLoading = false 
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     phone: "",
@@ -23,13 +24,13 @@ const ContactForm = ({
     categories: [],
     notes: "",
     isFavorite: false,
-    photoUrl: ""
+    photoUrl: "",
+    attachments: []
   })
   
   const [errors, setErrors] = useState({})
   const [categories, setCategories] = useState([])
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
-
   useEffect(() => {
     loadCategories()
     
@@ -47,7 +48,7 @@ const ContactForm = ({
         photoUrl: contact.photoUrl || ""
       })
     }
-  }, [contact])
+}, [contact])
 
   const loadCategories = async () => {
     try {
@@ -109,7 +110,7 @@ if (formData.phone && !/^[+]?[\d\s()-.]{10,}$/.test(formData.phone)) {
     }
   }
 
-  const isEditing = !!contact
+const isEditing = !!contact
 
   return (
     <motion.form
@@ -267,7 +268,25 @@ if (formData.phone && !/^[+]?[\d\s()-.]{10,}$/.test(formData.phone)) {
           </div>
         )}
       </div>
-
+{/* File Attachments */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Attachments
+            </label>
+            <ApperFileFieldComponent
+              elementId={`contact-attachments-${contact?.Id || 'new'}`}
+              config={{
+                fieldKey: `contact-attachments-${contact?.Id || 'new'}`,
+                tableName: 'contacts',
+                fieldName: 'attachments',
+                apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+                apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY,
+                existingFiles: formData.attachments || [],
+                fileCount: formData.attachments?.length || 0
+              }}
+              className="w-full"
+            />
+          </div>
       <Textarea
         label="Notes"
         value={formData.notes}
