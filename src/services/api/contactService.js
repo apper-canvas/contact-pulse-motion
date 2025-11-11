@@ -175,9 +175,9 @@ export const contactService = {
     return emailRegex.test(email)
   },
 
-  isValidPhone(phone) {
+isValidPhone(phone) {
     // Allow various phone formats
-    const phoneRegex = /^[\+]?[\d\s\(\)\-\.]{10,}$/
+    const phoneRegex = /^[+]?[\d\s()-\.]{10,}$/
     return phoneRegex.test(phone)
   }
 }
