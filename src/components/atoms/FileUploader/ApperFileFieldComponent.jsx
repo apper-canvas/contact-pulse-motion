@@ -49,6 +49,13 @@ useEffect(() => {
       }
     }
 
+const getErrorMessage = (error) => {
+      if (typeof error === 'string') return error
+      if (error && typeof error.message === 'string') return error.message
+      if (error && error.toString) return error.toString()
+      return 'An unknown error occurred'
+    }
+
     const initializeComponent = async () => {
       try {
         if (!window.ApperSDK || !window.ApperSDK.ApperFileUploader) {
@@ -70,7 +77,7 @@ useEffect(() => {
       } catch (err) {
         console.error('Failed to mount ApperFileField:', err)
         if (componentMounted) {
-          setError(err.message)
+          setError(getErrorMessage(err))
           setIsReady(false)
         }
       }
@@ -84,8 +91,8 @@ useEffect(() => {
           } else {
             await window.ApperSDK.ApperFileUploader.FileField.clearFiles(elementIdRef.current)
           }
-        } catch (err) {
-          console.error('Failed to update files:', err)
+} catch (err) {
+          console.error('Failed to update files:', getErrorMessage(err))
         }
       }
     }
@@ -142,8 +149,8 @@ useEffect(() => {
         try {
           window.ApperSDK?.ApperFileUploader?.FileField?.unmount(elementIdRef.current)
           mountedRef.current = false
-        } catch (err) {
-          console.error('Error during cleanup:', err)
+} catch (err) {
+          console.error('Error during cleanup:', getErrorMessage(err))
         }
       }
       
