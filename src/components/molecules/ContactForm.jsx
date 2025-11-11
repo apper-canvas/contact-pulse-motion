@@ -274,9 +274,9 @@ const isEditing = !!contact
               Attachments
             </label>
             <ApperFileFieldComponent
-              elementId={`contact-attachments-${contact?.Id || 'new'}`}
+              elementId={`contact-attachments-${contact?.Id}`}
               config={{
-                fieldKey: `contact-attachments-${contact?.Id || 'new'}`,
+                fieldKey: `contact-attachments-${contact?.Id}`,
                 tableName: 'contacts',
                 fieldName: 'attachments',
                 apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
