@@ -1,0 +1,80 @@
+[
+  {
+    "Id": 1,
+    "name": "Work",
+    "color": "#6366F1",
+    "icon": "Briefcase"
+  },
+  {
+    "Id": 2,
+    "name": "Personal",
+    "color": "#EC4899",
+    "icon": "Heart"
+  },
+  {
+    "Id": 3,
+    "name": "Family",
+    "color": "#10B981",
+    "icon": "Home"
+  },
+  {
+    "Id": 4,
+    "name": "Clients",
+    "color": "#8B5CF6",
+    "icon": "Users"
+  },
+  {
+    "Id": 5,
+    "name": "Freelancers",
+    "color": "#F59E0B",
+    "icon": "Zap"
+  },
+  {
+    "Id": 6,
+    "name": "Investors",
+    "color": "#EF4444",
+    "icon": "TrendingUp"
+  },
+  {
+    "Id": 7,
+    "name": "Legal",
+    "color": "#3B82F6",
+    "icon": "Scale"
+  },
+  {
+    "Id": 8,
+    "name": "Marketing",
+    "color": "#06B6D4",
+    "icon": "Megaphone"
+  },
+  {
+    "Id": 9,
+    "name": "Technical",
+    "color": "#84CC16",
+    "icon": "Code"
+  },
+  {
+    "Id": 10,
+    "name": "Healthcare",
+    "color": "#F97316",
+    "icon": "Stethoscope"
+  },
+  {
+    "Id": 11,
+    "name": "Services",
+    "color": "#A855F7",
+    "icon": "Settings"
+  },
+  {
+    "Id": 12,
+    "name": "Finance",
+    "color": "#059669",
+    "icon": "DollarSign"
+  },
+  {
+    "Id": 13,
+    "name": "Friends",
+    "color": "#DC2626",
+    "icon": "Coffee"
+  }
+]
