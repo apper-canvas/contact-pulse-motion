@@ -11,7 +11,6 @@ const [isReady, setIsReady] = useState(false)
   const [isSDKLoading, setIsSDKLoading] = useState(true)
   const elementIdRef = useRef(elementId)
   const mountedRef = useRef(false)
-  console.log('elementId1:', elementId)
 
   // Optimize existingFiles to prevent unnecessary re-renders
   const existingFiles = useMemo(() => {
@@ -69,7 +68,6 @@ const getErrorMessage = (error) => {
         }
 
         // Mount the file field
-        console.log('elementIdRef.current:', elementIdRef.current)
         const mountResult = await window.ApperSDK.ApperFileUploader.FileField.mount(elementIdRef.current, {
           ...config,
           existingFiles: existingFiles
@@ -105,7 +103,6 @@ const getErrorMessage = (error) => {
     }
 
   // Start SDK availability check
-  console.log('elementId2:', elementId)
     if (elementId) {
       const startSDKCheck = async () => {
         const isAvailable = await checkSDKAvailability()
