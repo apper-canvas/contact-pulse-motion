@@ -273,16 +273,24 @@ const isEditing = !!contact
             <label className="block text-sm font-medium text-gray-700">
               Attachments
             </label>
-            <ApperFileFieldComponent
-              elementId={`contact-attachments-${contact?.Id}`}
+<ApperFileFieldComponent
+              elementId={`contact-attachments-${contact?.Id || 'new'}`}
               config={{
-                fieldKey: `contact-attachments-${contact?.Id}`,
-                tableName: 'contacts',
-                fieldName: 'attachments',
+                fieldKey: `contact-attachments-${contact?.Id || 'new'}`,
+                tableName: 'contacts_c',
+                fieldName: 'attachments_c',
                 apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
                 apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY,
-                existingFiles: formData.attachments || [],
-                fileCount: formData.attachments?.length || 0
+                existingFiles: formData.attachments_c || [],
+                fileCount: formData.attachments_c?.length || 0,
+                maxFiles: 10,
+                acceptedFileTypes: ['image/*', 'application/pdf', '.doc', '.docx', '.txt']
+              }}
+              onFilesChange={(files) => {
+                setFormData(prev => ({
+                  ...prev,
+                  attachments_c: files
+                }))
               }}
               className="w-full"
             />

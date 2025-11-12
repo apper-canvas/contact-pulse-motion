@@ -1,17 +1,19 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Loading from "@/components/ui/Loading";
 
 const ApperFileFieldComponent = ({ 
   elementId, 
   config, 
   className = '', 
-  style = {} 
+  style = {},
+  onFilesChange = () => {}
 }) => {
-const [isReady, setIsReady] = useState(false)
+  const [isReady, setIsReady] = useState(false)
   const [error, setError] = useState(null)
   const [isSDKLoading, setIsSDKLoading] = useState(true)
+  const [files, setFiles] = useState([])
   const elementIdRef = useRef(elementId)
   const mountedRef = useRef(false)
-
   // Optimize existingFiles to prevent unnecessary re-renders
   const existingFiles = useMemo(() => {
     if (!config?.existingFiles || !Array.isArray(config.existingFiles)) {
@@ -68,9 +70,13 @@ const getErrorMessage = (error) => {
         }
 
         // Mount the file field
-        const mountResult = await window.ApperSDK.ApperFileUploader.FileField.mount(elementIdRef.current, {
+const mountResult = await window.ApperSDK.ApperFileUploader.FileField.mount(elementIdRef.current, {
           ...config,
-          existingFiles: existingFiles
+          existingFiles: existingFiles,
+          onFilesChange: (files) => {
+            setFiles(files)
+            onFilesChange(files)
+          }
         })
 
         if (componentMounted && mountResult) {
