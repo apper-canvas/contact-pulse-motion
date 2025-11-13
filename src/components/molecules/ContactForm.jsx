@@ -23,8 +23,9 @@ const [formData, setFormData] = useState({
     jobTitle: "",
     categories: [],
     notes: "",
-    isFavorite: false,
+isFavorite: false,
     photoUrl: "",
+    like_c: [],
     attachments: []
   })
   
@@ -44,8 +45,9 @@ const [formData, setFormData] = useState({
         jobTitle: contact.jobTitle || "",
         categories: contact.categories || [],
         notes: contact.notes || "",
-        isFavorite: contact.isFavorite || false,
-        photoUrl: contact.photoUrl || ""
+isFavorite: contact.isFavorite || false,
+        photoUrl: contact.photoUrl || "",
+        like_c: contact.like_c || []
       })
     }
 }, [contact])
@@ -194,6 +196,25 @@ const isEditing = !!contact
           placeholder="Position or role"
         />
       </div>
+{/* File Upload Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Files
+          </label>
+          <ApperFileFieldComponent
+            elementId={`contact-like-${contact?.Id || 'new'}`}
+            config={{
+              fieldKey: `like_c_${contact?.Id || Date.now()}`,
+              fieldName: 'like_c',
+              tableName: 'contacts_c',
+              apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+              apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY,
+              existingFiles: formData.like_c || [],
+              fileCount: (formData.like_c || []).length
+            }}
+            className="w-full"
+          />
+        </div>
 
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
